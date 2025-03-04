@@ -1,0 +1,28 @@
+{
+  "name": "eos-simple-keyring",
+  "version": "1.0.0",
+  "description": "一个简单的EOS keyring实现，用于管理EOS账户的密钥对",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "keywords": [
+    "eos",
+    "keyring",
+    "metamask"
+  ],
+  "author": "MetaMask",
+  "license": "ISC",
+  "dependencies": {
+    "eosjs": "^22.1.0",
+    "eosjs-ecc": "^4.0.7"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "jest": "^29.0.0"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
