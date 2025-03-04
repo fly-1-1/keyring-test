@@ -16,14 +16,14 @@ async function main() {
     const allAccounts = await keyring.getAccounts();
     console.log('当前所有账户:', allAccounts);
 
-    // // 签名交易
-    // const transaction = {
-    //   to: 'TW6Kq5pWYcHrKMMuqYVAjVBsFqNxLNDe1q',
-    //   amount: 1000000, // 1 TRX = 1,000,000 SUN
-    //   data: '',
-    // };
-    // const signedTx = await keyring.signTransaction(address, transaction);
-    // console.log('交易签名:', signedTx);
+    // 签名交易
+    const transaction = {
+      to: 'TW6Kq5pWYcHrKMMuqYVAjVBsFqNxLNDe1q',
+      amount: 1000000, // 1 TRX = 1,000,000 SUN
+      data: '',
+    };
+    const signedTx = await keyring.signTransaction(address, transaction);
+    console.log('交易签名:', signedTx);
 
     // 签名消息
     const message = 'Hello, TRON!';
