@@ -1,5 +1,5 @@
-const ecc = require('eosjs-ecc');
-const { Api, JsonRpc } = require('eosjs');
+import ecc from 'eosjs-ecc';
+import { Api, JsonRpc } from 'eosjs';
 
 class EOSKeyring {
   static type = 'Simple Key Pair';
@@ -76,4 +76,4 @@ class EOSKeyring {
   }
 }
 
-module.exports = EOSKeyring;
+export default EOSKeyring;

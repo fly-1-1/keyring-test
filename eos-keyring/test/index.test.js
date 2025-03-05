@@ -1,5 +1,5 @@
-const EOSKeyring = require('../index');
-const ecc = require('eosjs-ecc');
+import EOSKeyring from '../index.js';
+import ecc from 'eosjs-ecc';
 
 describe('EOSKeyring', () => {
   let keyring;

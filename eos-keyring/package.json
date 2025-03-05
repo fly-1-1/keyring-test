@@ -2,9 +2,10 @@
   "name": "eos-simple-keyring",
   "version": "1.0.0",
   "description": "一个简单的EOS keyring实现，用于管理EOS账户的密钥对",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "jest --watch",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"

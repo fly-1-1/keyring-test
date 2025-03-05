@@ -1,5 +1,5 @@
-const EOSKeyring = require('./index');
-const { Api, JsonRpc } = require('eosjs');
+import EOSKeyring from './index.js';
+import { Api, JsonRpc } from 'eosjs';
 
 async function main() {
   try {
