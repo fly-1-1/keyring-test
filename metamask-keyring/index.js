@@ -1,6 +1,8 @@
-import { KeyringController } from "@metamask/keyring-controller";
+import { keyringBuilderFactory, KeyringController } from "@metamask/keyring-controller";
 
 import { Messenger } from "@metamask/base-controller";
+
+import { EOSKeyring } from "../eos-keyring/index.js";
 
 let controllerMessenger = new Messenger();
 
@@ -12,10 +14,9 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
-  state: {
-    vault: '',
-    keyrings: []
-  }
+  keyringBuilders:[
+    keyringBuilderFactory(EOSKeyring)
+  ]
 });
 
 keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) => {
@@ -24,7 +25,7 @@ keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) =>
 
 await keyringController.createNewVaultAndKeychain('password');
 await keyringController.submitPassword('password');
-const accounts = await keyringController.addNewAccount(2);
+const accounts = await keyringController.addNewAccount(1);
 
 console.log('成功创建账户:', accounts);
 
