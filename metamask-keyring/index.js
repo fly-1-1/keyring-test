@@ -1,8 +1,6 @@
 import { keyringBuilderFactory, KeyringController } from "@metamask/keyring-controller";
-
 import { Messenger } from "@metamask/base-controller";
-
-import EOSKeyring from "../eos-keyring/index.js";
+import EosKeyring from "../eos-keyring/index.js";
 
 let controllerMessenger = new Messenger();
 
@@ -15,7 +13,7 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
   keyringBuilders:[
-    keyringBuilderFactory(EOSKeyring)
+    keyringBuilderFactory(EosKeyring)
   ],
   KeyringTypes:['Eos Key Pair']
 });
