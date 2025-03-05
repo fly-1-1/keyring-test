@@ -2,7 +2,7 @@ import { keyringBuilderFactory, KeyringController } from "@metamask/keyring-cont
 
 import { Messenger } from "@metamask/base-controller";
 
-import { EOSKeyring } from "../eos-keyring/index.js";
+import EOSKeyring from "../eos-keyring/index.js";
 
 let controllerMessenger = new Messenger();
 
@@ -16,7 +16,8 @@ const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
   keyringBuilders:[
     keyringBuilderFactory(EOSKeyring)
-  ]
+  ],
+  KeyringTypes:['Simple Key Pair']
 });
 
 keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) => {

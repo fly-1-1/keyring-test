@@ -1,5 +1,5 @@
 import EOSKeyring from './index.js';
-import { Api, JsonRpc } from 'eosjs';
+
 
 async function main() {
   try {

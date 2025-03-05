@@ -1,5 +1,5 @@
 import ecc from 'eosjs-ecc';
-import { Api, JsonRpc } from 'eosjs';
+
 
 class EOSKeyring {
   static type = 'Simple Key Pair';
