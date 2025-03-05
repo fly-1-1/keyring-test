@@ -14,13 +14,6 @@ const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
   state: {
     vault: '',
-    memStore: {
-      isUnlocked: false,
-      keyrings: [],
-      vault: '',
-      encryptionKey: null,
-      encryptionSalt: null
-    },
     keyrings: []
   }
 });
@@ -31,6 +24,7 @@ keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) =>
 
 await keyringController.createNewVaultAndKeychain('password');
 await keyringController.submitPassword('password');
-const accounts = await keyringController.addNewAccount(1);
+const accounts = await keyringController.addNewAccount(2);
+
 console.log('成功创建账户:', accounts);
 
