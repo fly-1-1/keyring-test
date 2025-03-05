@@ -17,7 +17,7 @@ const keyringController = new KeyringController({
   keyringBuilders:[
     keyringBuilderFactory(EOSKeyring)
   ],
-  KeyringTypes:['Simple Key Pair']
+  KeyringTypes:['Eos Key Pair']
 });
 
 keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) => {
