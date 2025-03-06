@@ -1,4 +1,7 @@
-import { keyringBuilderFactory, KeyringController } from "@metamask/keyring-controller";
+import {
+  keyringBuilderFactory,
+  KeyringController,
+} from "@metamask/keyring-controller";
 import { Messenger } from "@metamask/base-controller";
 import EosKeyring from "../eos-keyring/index.js";
 
@@ -12,22 +15,31 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
-  keyringBuilders:[
-    keyringBuilderFactory(EosKeyring)
-  ]
+  keyringBuilders: [keyringBuilderFactory(EosKeyring)],
 });
 
-keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) => {
-  console.log('Keyring state changed:', state);
-});
+keyringControllerMessenger.subscribe(
+  "KeyringController:stateChange",
+  (state) => {
+    //console.log("Keyring state changed:", state);
+  }
+);
 
-await keyringController.createNewVaultAndKeychain('password');
-await keyringController.submitPassword('password');
+await keyringController.createNewVaultAndKeychain("password");
+await keyringController.submitPassword("password");
 await keyringController.addNewKeyring(EosKeyring.type);
-const eosKeyrings = keyringController.getKeyringsByType(EosKeyring.type);
-const eosAccounts = await eosKeyrings[0].addAccounts(1);
 
-console.log('成功创建EOS账户:', eosAccounts);
+const selector = { type: EosKeyring.type };
 
-const accounts = await keyringController.getAccounts()
-console.log('账户列表:', accounts);
+keyringController.withKeyring(selector, async ({ keyring }) => {
+  const a1 = await keyring.addAccounts(1);
+  const a2 = await keyring.addAccounts(1);
+
+  console.log("成功创建EOS账户:", a1, a2);
+});
+
+keyringController.withKeyring(selector, async ({ keyring }) => {
+  const accounts = await keyring.getAccounts();
+  console.log("获取EOS账户:", accounts);
+});
+//console.log('成功创建EOS账户:', eosAccounts);
