@@ -3,6 +3,7 @@ import ecc from 'eosjs-ecc';
 
 class EosKeyring {
   static type = 'Eos Key Pair';
+  type = EosKeyring.type;
 
   constructor(opts = {}) {
     this.wallets = [];

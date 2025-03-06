@@ -23,7 +23,11 @@ keyringControllerMessenger.subscribe('KeyringController:stateChange', (state) =>
 
 await keyringController.createNewVaultAndKeychain('password');
 await keyringController.submitPassword('password');
-const accounts = await keyringController.addNewAccount(1);
+await keyringController.addNewKeyring(EosKeyring.type);
+const eosKeyrings = keyringController.getKeyringsByType(EosKeyring.type);
+const eosAccounts = await eosKeyrings[0].addAccounts(1);
 
-console.log('成功创建账户:', accounts);
+console.log('成功创建EOS账户:', eosAccounts);
 
+const accounts = await keyringController.getAccounts()
+console.log('账户列表:', accounts);
