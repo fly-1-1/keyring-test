@@ -78,38 +78,25 @@ async function main() {
 
     // 签名交易
     const signedTx = await keyring.signTransaction(address, tx);
+    console.log('签名返回对象结构:', JSON.stringify(signedTx, null, 2));
     console.log('原始tx_blob:', signedTx.tx_blob);
     try {
-      const decodedTx = xrpl.decode(signedTx.tx_blob);
-      console.log('解码后的交易对象:', JSON.stringify(decodedTx, null, 2));
-      const isValidHash = xrpl.validate(decodedTx);
-      if (!isValidHash) {
-        throw new Error('交易哈希验证失败');
+      const submitResult = await client.submit(signedTx.tx_blob);
+      console.log('交易提交结果:', submitResult);
+      if (submitResult.result.validated) {
+        console.log('交易验证成功');
+      } else {
+        console.error('交易验证失败:', submitResult.result.meta.TransactionResult);
       }
-      console.log('交易哈希验证通过');
     } catch (error) {
-      console.error('交易验证过程中发生错误:', error);
-      throw error;
+      console.error('交易提交过程中发生错误:', error);
     }
-
-    // 签名消息
-    const message = 'Hello Ripple Network!';
-    const signature = await keyring.signMessage(address, message);
-    console.log('消息签名结果:', signature);
-
-    // 导出私钥
-    const privateKey = await keyring.exportAccount(address);
-    console.log('账户私钥:', privateKey);
-
-    // 序列化测试
-    const serialized = await keyring.serialize();
-    console.log('序列化数据:', serialized);
-
-    // 反序列化验证
-    const restoredKeyring = new RippleKeyring();
-    await restoredKeyring.deserialize(serialized);
-    console.log('恢复的账户:', await restoredKeyring.getAccounts());
-
+    const decodedTx = xrpl.decode(signedTx.tx_blob);
+    const isValidHash = xrpl.validate(decodedTx);
+    if (!isValidHash) {
+      throw new Error('交易哈希验证失败');
+    }
+    console.log('交易哈希验证通过');
   } catch (error) {
     console.error('发生错误:', error);
   }

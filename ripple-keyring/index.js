@@ -37,6 +37,15 @@ class RippleKeyring {
       
       // 使用xrpl库提供的签名方法
       const signed = xrpl.Wallet.fromSeed(wallet.seed).sign(transaction);
+      console.log('完整签名对象:', JSON.stringify(signed, null, 2));
+      
+      // 新增tx_blob校验
+      if (!signed.tx_blob || typeof signed.tx_blob !== 'string') {
+        throw new Error('签名后交易缺少有效的tx_blob字段');
+      }
+      if (!/^[A-Fa-f0-9]+$/.test(signed.tx_blob)) {
+        throw new Error('tx_blob必须是有效的16进制字符串');
+      }
       
       // 解析签名后的交易blob
       const decodedTx = xrpl.decode(signed.tx_blob);
@@ -48,9 +57,15 @@ class RippleKeyring {
         throw new Error('解析后的交易丢失必要字段');
       }
       
+      // 添加二进制格式校验
+      if (!/^[A-Fa-f0-9]+$/.test(signed.tx_blob)) {
+        throw new Error('无效的交易二进制格式');
+      }
+      
+      console.log('签名后的原始tx_blob:', signed.tx_blob);
       return {
-        ...decodedTx,
-        hash: signed.hash
+        ...signed,
+        tx_blob: signed.tx_blob.toString('hex').toUpperCase()
       };
     } catch (error) {
       console.error(`交易签名失败: ${error.message}`);

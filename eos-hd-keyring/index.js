@@ -1,7 +1,6 @@
 import ecc from 'eosjs-ecc';
 import bip39 from 'bip39';
 import hdkey from 'hdkey';
-import { publicToAddress, toChecksumAddress } from 'ethereumjs-util';
 
 class EosHdKeyring {
   static type = 'EOS HD Key Pair';
@@ -49,7 +48,6 @@ class EosHdKeyring {
       this._initFromMnemonic(this.mnemonic);
     }
 
-    const newWallets = [];
     for (let i = 0; i < n; i++) {
       const index = this.wallets.length;
       const path = `${this.hdPath}/${index}`;
