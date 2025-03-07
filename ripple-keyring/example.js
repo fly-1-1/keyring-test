@@ -78,15 +78,19 @@ async function main() {
 
     // 签名交易
     const signedTx = await keyring.signTransaction(address, tx);
-    console.log('已签名交易:', signedTx);
-    console.log('交易哈希:', signedTx.hash);
-    
-    // 验证交易哈希
-    const isValidHash = xrpl.validate(signedTx);
-    if (!isValidHash) {
-      throw new Error('交易哈希验证失败');
+    console.log('原始tx_blob:', signedTx.tx_blob);
+    try {
+      const decodedTx = xrpl.decode(signedTx.tx_blob);
+      console.log('解码后的交易对象:', JSON.stringify(decodedTx, null, 2));
+      const isValidHash = xrpl.validate(decodedTx);
+      if (!isValidHash) {
+        throw new Error('交易哈希验证失败');
+      }
+      console.log('交易哈希验证通过');
+    } catch (error) {
+      console.error('交易验证过程中发生错误:', error);
+      throw error;
     }
-    console.log('交易哈希验证通过');
 
     // 签名消息
     const message = 'Hello Ripple Network!';
