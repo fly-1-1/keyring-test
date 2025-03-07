@@ -63,10 +63,7 @@ class RippleKeyring {
       }
       
       console.log('签名后的原始tx_blob:', signed.tx_blob);
-      return {
-        ...signed,
-        tx_blob: signed.tx_blob.toString('hex').toUpperCase()
-      };
+      return signed;
     } catch (error) {
       console.error(`交易签名失败: ${error.message}`);
       throw new Error(`签名过程中发生错误: ${error.message}`);
