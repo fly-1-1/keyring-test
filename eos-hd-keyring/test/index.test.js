@@ -26,10 +26,11 @@ describe('EosHdKeyring', () => {
 
   it('应该正确签名交易', async () => {
     const [publicKey] = await keyring.addAccounts(1);
-    const transaction = JSON.stringify({ actions: [] });
-    const signature = await keyring.signTransaction(publicKey, transaction);
+    const transaction = { actions: [] };
+    const serializedTx = JSON.stringify(transaction);
+    const signature = await keyring.signTransaction(publicKey, serializedTx);
     
-    const recoveredPub = ecc.recover(signature, transaction);
+    const recoveredPub = ecc.recover(signature, serializedTx);
     expect(recoveredPub).toBe(publicKey);
   });
 

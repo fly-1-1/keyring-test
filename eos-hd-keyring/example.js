@@ -9,7 +9,7 @@ async function main() {
   // 初始化HD钱包
   const keyring = new EosHdKeyring({
     mnemonic,
-    hdPath: "m/44'/194'/0'/0"
+    hdPath: "m/44'/194'/0'/0" // 使用EOS标准BIP44路径
   });
 
   // 派生3个账户
@@ -19,8 +19,9 @@ async function main() {
 
   // 交易签名演示
   const transaction = { actions: [{ account: 'eosio', name: 'transfer', data: {} }] };
-  const signature = await keyring.signTransaction(accounts[0], transaction);
-  console.log('签名验证结果:', ecc.verify(signature, transaction, accounts[0]));
+  const serializedTx = JSON.stringify(transaction);
+  const signature = await keyring.signTransaction(accounts[0], serializedTx);
+  console.log('签名验证结果:', ecc.verify(signature, serializedTx, accounts[0]));
 
   // 状态恢复测试
   const serialized = await keyring.serialize();
