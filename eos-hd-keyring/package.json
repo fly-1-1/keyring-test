@@ -1,0 +1,35 @@
+{
+  "name": "eos-hd-keyring",
+  "version": "1.0.0",
+  "description": "BIP39-based Hierarchical Deterministic EOS key management library",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "keywords": [
+    "eos",
+    "hd wallet",
+    "bip39",
+    "keyring"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MetaMask/eos-hd-keyring.git"
+  },
+  "author": "MetaMask",
+  "license": "ISC",
+  "dependencies": {
+    "eosjs-ecc": "^4.0.7",
+    "bip39": "^3.1.7",
+    "hdkey": "^2.0.1",
+    "ethereumjs-util": "^8.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+}
