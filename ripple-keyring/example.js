@@ -8,9 +8,13 @@ async function main() {
     console.log("创建RippleKeyring实例成功");
 
     // 创建新账户
-    const accounts = await keyring.addAccounts(1);
+    const accounts = await keyring.addAccounts(2);
     const address = accounts[0];
-    console.log("创建的XRP地址:", address);
+    console.log("创建的XRP地址:", accounts);
+
+    await keyring.removeAccount(accounts[1]);
+    const removedAccounts = await keyring.getAccounts();
+    console.log("删除的XRP地址后:", removedAccounts);
 
     // 请求测试网水龙头
     console.log("正在申请测试网XRP...");
