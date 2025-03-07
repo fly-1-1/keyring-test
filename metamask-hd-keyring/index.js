@@ -25,21 +25,20 @@ const keyringController = new KeyringController({
 keyringControllerMessenger.subscribe(
   "KeyringController:stateChange",
   (state) => {
-    console.log("Keyring state changed:", state);
+    //console.log("Keyring state changed:", state);
   }
 );
 
 await keyringController.createNewVaultAndKeychain("password");
 await keyringController.submitPassword("password");
 
-await keyringController.addNewKeyring(EosHdKeyring.type);
-
+const mnemonic = 'legal winner thank year wave sausage worth useful legal winner thank yellow';
+await keyringController.addNewKeyring(EosHdKeyring.type, { mnemonic: mnemonic });
 const selector = { type: EosHdKeyring.type };
-
 keyringController.withKeyring(selector, async ({ keyring }) => {
-  const a1 = await keyring.addAccounts(1);
-  console.log("成功创建EOS账户:", a1);
-
+ //await keyring.deserialize({ mnemonic: mnemonic });
+  const a1 = await keyring.addAccounts(3);
+  console.log("成功创建EOS-HD账户:", a1);
   const signTransaction = await keyring.signTransaction(a1[0],  JSON.stringify({
     actions: [
       {
@@ -62,16 +61,11 @@ keyringController.withKeyring(selector, async ({ keyring }) => {
   console.log("签名结果:", signTransaction);
 });
 
-// await keyringController.addNewKeyring(EosKeyring.type);
+await keyringController.addNewKeyring(EosKeyring.type);
 
-// const selector = { type: EosKeyring.type };
+const selector2 = { type: EosKeyring.type };
 
-// keyringController.withKeyring(selector, async ({ keyring }) => {
-//   const a1 = await keyring.addAccounts(3);
-//   console.log("成功创建EOS账户:", a1);
-// });
-
-// keyringController.withKeyring(selector, async ({ keyring }) => {
-//   const accounts = await keyring.getAccounts();
-//   console.log("获取EOS账户:", accounts);
-// });
+keyringController.withKeyring(selector2, async ({ keyring }) => {
+  const a1 = await keyring.addAccounts(3);
+  console.log("成功创建EOS账户:", a1);
+});
