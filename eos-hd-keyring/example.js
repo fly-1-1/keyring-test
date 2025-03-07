@@ -25,8 +25,10 @@ async function main() {
 
   // 状态恢复测试
   const serialized = await keyring.serialize();
+  console.log('状态序列化结果:', serialized);
   const restoredKeyring = new EosHdKeyring();
   await restoredKeyring.deserialize(serialized);
+  console.log('状态恢复账户:', await restoredKeyring.getAccounts());
   
   // 验证确定性特性
   const restoredAccounts = await restoredKeyring.getAccounts();
