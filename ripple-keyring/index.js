@@ -1,4 +1,5 @@
 import xrpl from 'xrpl';
+import crypto from 'crypto';
 
 class RippleKeyring {
   static type = 'Ripple Key Pair';
@@ -70,11 +71,7 @@ class RippleKeyring {
     }
   }
 
-  async signMessage(address, message) {
-    const wallet = this._getWalletForAccount(address);
-    const signature = wallet.signMessage(message);
-    return signature;
-  }
+
 
   async serialize() {
     return this.wallets.map(w => w.seed);

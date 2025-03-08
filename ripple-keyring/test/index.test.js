@@ -83,15 +83,4 @@ describe('RippleKeyring', () => {
       expect(await newKeyring.getAccounts()).toEqual(await keyring.getAccounts());
     });
   });
-
-  describe('消息签名', () => {
-    it('生成有效签名', async () => {
-      const [address] = await keyring.addAccounts(1);
-      const message = 'Test message';
-      const signature = await keyring.signMessage(address, message);
-      
-      const wallet = keyring._getWalletForAccount(address);
-      expect(wallet.verifySignature(message, signature)).toBe(true);
-    });
-  });
 });
