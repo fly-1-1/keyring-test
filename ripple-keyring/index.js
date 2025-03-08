@@ -1,5 +1,4 @@
 import xrpl from 'xrpl';
-import crypto from 'crypto';
 
 class RippleKeyring {
   static type = 'Ripple Key Pair';
@@ -108,6 +107,11 @@ class RippleKeyring {
     this.wallets = this.wallets.filter(w => 
       w.address.toLowerCase() !== address.toLowerCase()
     );
+  }
+
+  async exportAccount(address) {
+    const wallet = this._getWalletForAccount(address);
+    return wallet.seed;
   }
 
   _getWalletForAccount(address) {
