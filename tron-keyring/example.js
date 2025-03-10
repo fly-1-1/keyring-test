@@ -11,10 +11,24 @@ async function main() {
     const accounts = await keyring.addAccounts(1);
     const address = accounts[0];
     console.log("创建的TRON地址:", address);
+    const privateKey = await keyring.exportAccount(address)
+    console.log("创建的私钥:", privateKey);
 
     // 使用已有测试币的地址
-    const testAddress = "TBdTtThKWRBiZ8T881D4eUD2SkRVFzUCq3";
+    let testAddress = "TSTJDk8Ec6z329LA9gAvJ8655Ah81HmCeo";
     console.log("使用已有测试币的地址:", testAddress);
+    
+    // 为测试地址导入私钥（这里需要替换为实际的私钥）
+    const testPrivateKey = "21581BD83403451F639D8438D526BBB05884BDD40D49AA217E8CDD371A5589EC"; // 替换为实际的私钥
+    await keyring.deserialize([testPrivateKey]);
+    
+    // 验证测试地址是否已添加到keyring
+    const updatedAccounts = await keyring.getAccounts();
+    if (!updatedAccounts.includes(testAddress)) {
+      console.log("警告：测试地址未成功添加到keyring，将使用新创建的地址");
+      // 如果测试地址未成功添加，则使用新创建的地址
+      testAddress = address;
+    }
 
     // 获取所有账户
     const allAccounts = await keyring.getAccounts();
