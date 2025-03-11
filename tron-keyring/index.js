@@ -123,10 +123,10 @@ class TronKeyring {
   }
 
   /**
-   * 使用TRON私钥签名消息（TIP-191标准）
-   * @param {string} address - 签名者的TRON地址
-   * @param {string} message - 要签名的消息文本
-   * @returns {Promise<Object>} - 包含原始消息、签名和地址的对象
+   * 使用指定地址的私钥对消息进行签名
+   * @param {string} address - 用于签名的TRON地址
+   * @param {string} message - 要签名的消息
+   * @returns {Promise<Object>} - 包含消息、签名和地址的对象
    * @throws {Error} 如果地址无效、消息无效或签名过程中发生错误
    */
   async signMessage(address, message) {
@@ -140,12 +140,8 @@ class TronKeyring {
     try {
       const wallet = this._getWalletForAccount(address);
       
-      // 创建TronWeb实例
-      const tronWeb = this._createTronWeb(wallet.privateKey);
-      
-      // 直接使用TronWeb的签名API
-      // 与TronWeb文档保持一致，使用sign方法
-      const signature = await tronWeb.trx.sign(message);
+      // 直接使用TronWeb.Trx的静态方法进行签名，避免实例化问题
+      const signature = await TronWeb.Trx.signMessageV2(message, wallet.privateKey);
       
       // 返回签名结果
       return {
@@ -154,8 +150,8 @@ class TronKeyring {
         address
       };
     } catch (error) {
-      console.error(`消息签名失败: ${error.message}`);
-      throw new Error(`签名过程中发生错误: ${error.message}`);
+      console.error(`消息签名失败:`, error);
+      throw new Error(`签名过程中发生错误: ${error.message || String(error)}`);
     }
   }
 
@@ -163,7 +159,7 @@ class TronKeyring {
    * 验证消息签名
    * @param {string} message - 原始消息
    * @param {string} signature - 消息签名
-   * @returns {Promise<string>} - 返回签名者地址（Base58格式）
+   * @returns {Promise<boolean>} - 如果签名有效则返回true，否则返回false
    * @throws {Error} 如果消息无效、签名无效或验证过程中发生错误
    */
   async verifyMessage(message, signature) {
@@ -178,14 +174,20 @@ class TronKeyring {
       // 创建TronWeb实例
       const tronWeb = this._createTronWeb();
       
-      // 直接使用TronWeb的验证API
-      // 使用verifySignature方法验证签名
-      const result = await tronWeb.trx.verifySignature(message, signature);
-      
-      return result;
+      try {
+        // 使用verifyMessageV2方法验证签名并恢复地址
+        const recoveredAddress = await tronWeb.trx.verifyMessageV2(message, signature);
+        
+        // 验证地址是否是当前钥匙串管理的地址
+        const accounts = await this.getAccounts();
+        return accounts.includes(recoveredAddress);
+      } catch (e) {
+        console.log('签名验证失败:', e);
+        return false;
+      }
     } catch (error) {
-      console.error(`消息验证失败: ${error.message}`);
-      throw new Error(`验证过程中发生错误: ${error.message}`);
+      console.error(`消息验证失败:`, error);
+      throw new Error(`验证过程中发生错误: ${error.message || String(error)}`);
     }
   }
 

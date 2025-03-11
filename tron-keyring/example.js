@@ -82,20 +82,24 @@ async function main() {
       const messageToSign = "Hello Tron Blockchain!";
       console.log("准备签名的消息:", messageToSign);
       
+      // 尝试签名消息
       const signedMessage = await keyring.signMessage(testAddress, messageToSign);
-      console.log("原始消息:", signedMessage.message);
-      console.log("签名结果:", signedMessage.signature);
-      console.log("签名地址:", signedMessage.address);
-
-      // 测试验证消息功能
+      console.log("消息签名成功!");
+      console.log("签名:", signedMessage.signature);
+      
+      // 验证消息
       console.log("\n=== 测试验证消息功能 ===");
-      const isVerified = await keyring.verifyMessage(
-        messageToSign,
-        signedMessage.signature
-      );
-      console.log("消息验证结果:", isVerified ? "有效" : "无效");
+      try {
+        const isVerified = await keyring.verifyMessage(
+          messageToSign,
+          signedMessage.signature
+        );
+        console.log("消息验证结果:", isVerified ? "有效" : "无效");
+      } catch (verifyError) {
+        console.error("消息验证失败:", verifyError.message || verifyError);
+      }
     } catch (error) {
-      console.error("消息签名或验证失败:", error.message);
+      console.error("消息签名失败:", error.message || error);
     }
 
     // 测试序列化功能
