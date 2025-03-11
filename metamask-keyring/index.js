@@ -24,7 +24,7 @@ const keyringController = new KeyringController({
 keyringControllerMessenger.subscribe(
   "KeyringController:stateChange",
   (state) => {
-    console.log("Keyring state changed:", state);
+    //console.log("Keyring state changed:", state);
   }
 );
 const mnemonic = 'legal winner thank year wave sausage worth useful legal winner thank yellow';
@@ -39,9 +39,9 @@ await keyringController.addNewKeyring(SwtcKeyring.type);
 const swtcSelector = { type: SwtcKeyring.type };
 
 keyringController.withKeyring(swtcSelector, async ({ keyring }) => {
-  const a1 = await keyring.addAccount();
+  const a1 = await keyring.addAccounts(2);
   console.log("成功创建SWTC账户:", a1);
-  const swtcPrivateKey = await keyring.exportAccount(a1)
+  const swtcPrivateKey = await keyring.exportAccount(a1[0])
   console.log("导出SWTC账户私钥:", swtcPrivateKey);
 
 })

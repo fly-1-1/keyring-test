@@ -7,9 +7,10 @@ async function main() {
     // 创建一个新的keyring实例
     const keyring = new SWTCKeyring();
     console.log('已创建SWTC Keyring实例');
-    
+         
     // 创建一个新账户
-    const address1 = await keyring.addAccount();
+    const address = await keyring.addAccounts();
+    const address1 = address[0];
     console.log('创建的新地址:', address1);
     
     // 查询所有账户
@@ -20,9 +21,6 @@ async function main() {
     const privateKey = await keyring.exportAccount(address1);
     console.log('账户私钥:', privateKey);
     
-    // 使用私钥导入账户
-    const address2 = await keyring.addAccount({ privateKey });
-    console.log('导入的地址:', address2);
     
     // 签名消息
     const message = 'Hello SWTC!';

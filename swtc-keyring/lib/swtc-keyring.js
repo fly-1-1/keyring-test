@@ -49,28 +49,26 @@ class SwtcKeyring extends EventEmitter {
   }
 
   /**
-   * 添加新账户/钱包
-   * @param {Object} [opts={}] - 选项
-   * @returns {string} 返回新创建的地址
+   * 添加多个新账户/钱包
+   * @param {number} [n=1] - 要创建的账户数量
+   * @returns {string[]} 返回新创建的地址数组
    */
-  async addAccount(opts = {}) {
-    if (opts.privateKey) {
-      const wallet = this._getWalletFromPrivateKey(opts.privateKey);
-      this.wallets.push({
-        address: wallet.address,
-        privateKey: opts.privateKey
-      });
-      return wallet.address;
-    } else {
+  async addAccounts(n = 1) {
+    const newAddresses = [];
+    
+    for (let i = 0; i < n; i++) {
       // 创建新钱包
       const wallet = this._generateWallet();
       this.wallets.push({
         address: wallet.address,
         privateKey: wallet.secret
       });
-      return wallet.address;
+      newAddresses.push(wallet.address);
     }
+    
+    return newAddresses;
   }
+
 
   /**
    * 获取所有账户地址
