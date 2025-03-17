@@ -53,11 +53,14 @@ async function testCCDAOHDKeyring() {
 
   await keyringController.addNewKeyring(CCDAOHDKeyring.type);
 
+
   const CCDAOHdSelector = { type: CCDAOHDKeyring.type };
 
   await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
-    await keyring.addAccount(2);
-    //await keyring.addAccount();
+    await keyring.addAccount(HDWallet.generateMnemonic());
+    await keyring.addAccount(HDWallet.generateMnemonic());
+
+    //await keyring.addAccount(1,HDWallet.generateMnemonic());
 
     const accounts =  await keyring.getAccounts()
     console.log(accounts)
@@ -69,7 +72,7 @@ async function testCCDAOHDKeyring() {
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
     "Gcc123456.",
-   '{"data":"CQU8/cneE+VXWLOhbjdBxEzZwnllDcCbMOi83NDxiw2HLH17T4nyu1p2m2UQI+DuMRwveKrBX2TCmd8UPnQ7IG4oCvaN1nO5vVH6xyV0xdXFKRI8ZKxQI4+ogzbX7Lz89tRh0LZOOsO2JEzhUChaav2tWAkBZ48ZljPL2S8W4YytDbNHJ/kLKQdwogs6kv0r9fsMEpG42bAbzrsND/HoG5ihuzHx5OG0fI/U+k79cedK+iyW8SVo2m7lfRG/DT+QVqdNPDbxUyGagJydPQehdHZgnMrPMS2fpA3teTPtE2MudRkW/9d4BKO6KmfbgzaQ3MIA65X/TK9SSPgIAmp9WXIx8EQcIIdzjhDjdF8vf23FruHhpHpsu7cHKBqvf+Z6DTjZo3fmGtYysJkKzWuRSBlSX4/zreCKdZXvGoRuY2vBch/TWfZJHW1qCYuxXpdd9/EGxUI0XCep17TBeW0RJjyEOKBmSPw8HweFgsv4UmtQYKXzhV2+WIFBmE4Og0cUWuj8+8Spuuhf0y28BaViK8zOZNrPZAU1uE0WJY8o9WMkU68SUPGgt9TBAc6i+2Ros2jANYSpwZ9/10revPHXb+ccPtrri5Dr/itJSNnZ9lY7H7xIZAVbSUlvblytfk4YUVnpQZa59EDKeT10jB6/w4zLyYPuP7ypBr80mtku+zcP/c7OL93zqL67/oeueTzORsoMQXNP+lfyfdYO4BMsuH4Jqoz5LOt/NXHuFnLAhMwFLGzPjaBtaqbGCMhfNE9CnGs/6It61UAuPb6IQy8c6Fkcs4qWjrVnhLsnG1E5W5Kjo46YJI54JEtEmQt9qyrPmCpsgpI8K8Df6t6QjAtV4ZNKH0Df2j1ftbjvreYEchqIpd2y+8Psgr0HykHFjOcDyRIj8AdjXrz+OI2+AVy2nPQCRhaUXnXeeoo6v7FYM42egb+tHzAuttHpYcMxHJ9IYrB/aknBb4KJ5xX6/r7RsG1zQrxkDk6RYm6kOGttjXi6Jxb0Ig0XOot8NGmqLqbYS4qR6nNVXLB/RzBULvooVNWs0Qo/ZnRAKG4MBb9bn1VsXZzc3biL/MGQRtX73kZMT6qswRsBgRAghkeNzfDDQoTmJFqAjcyH0S8Z0cgLSYxXkqXJqWxglPrWe+59NwGtgh53S+ZsNKEJvNQh6syHyEt6bJIdCW+HUlznyWZi2ob+MuwSe5fmS43vXX5P8QsYyMBqz6uJ1jus5BQwA6KgEI96HHCLoMnEgp8aa7CKY1XilXCwlIWcNUNvsZLoWZOINP1LBZv6ZvFFHuh1DasYo7TPfYxGhMZHVTBz2ExLy3xiazGXKjmcrXSnAT7+3CfgBAZo/kMBs79YyHaUFaguzkjuuRM=","iv":"DehvX93/TC2Tqi8C7tFBug==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"bPsPHmxXopa4Jr4aUBnZC+IikQT4K4WRJUpaG/hBeYs="}'
+   '{"data":"Fi137rDRIt+MtTbbgh288sTVcK9Vd3iwAcXo3oEpDWRv/A1111qmUQarUXIFc06H1kVLCQnK1lh4O1x3M5lYhSczxkGz2hi0Z1SfCkr5AwQ/p3fYnphkOtE1DJaZQaL+6WQFfgjNnJTFc45BuZKdb3wD+Tk7v4+q3iL9T0X5hg79vIpYxhkOVZiMxeLXSIBU+0cT25Ug0/6sAkeQ+1EjspnaxrOTJf2er6cGgt+Fps9YH+J4aQceLAnJhbOBSAHabVZ2OraIFnZI8/OIcyXqSSezPe3aFHClMyICq1HoBRiGGgloHSdVGCaaFRARA1F8MZw9vRtWR+qs79EANnUlQVNiC5m2xjQGQy8gf2A9pfSSgOL/BCn8nwmk0zAzG1KmWKLcVuLRJYYKnlQvYzHBQpm2MOuyRhpJhaiDhN68WWNLlTmq54m8vZMIjAL9vLZ8LUS6CltVo9hJrA+AhdYzr2qL5xZGiVOXQxsM/F+vKmfWSkTJ050kHkabV6EjXfcAMLYXVUWDt4uTAzuP9JKf+xsyvxLBwGkih8OdBgud1ilfmbZfwWA5k1/Rimdj2IYZzTSG8BW9ZTI1uTKqKidtrhdRcKD/bEUWD2ZBV8i+9bD2v0TsEQTriZD02lxETAO+yW4KfwtEO1wTvXT7ftyDOzbR6N4o5UtMilWvwv8+3gFSMwxBN96WKkXuabJNYS52Y6DxUG/Ac53ESN4wlcoAer4RAa4U5s9L7YaHaOcWPDx6YdLEgp0FpLyyy7VeM3RCNZIRr2VWjNUFcBedjROHjNEtU3wUS8FnAj6jhmZkKN8N1dGgtfZzo9E/Sl1MuNbV5putdlxkxD6Kux7Oha0qiKZC6OcasnmAFSDMRWXR0qAnWa6tVdq3ypiuNh5yPw4/+OL3x3iBjNOHsWhUtXqCsIkXZUGPsRTbhvnnzb1rgL1MLJ0CPtpMBExfb7cEjIKr29DWZt+/QANvF5Ti8aVy5iAa5ZnrUESx8a6R2W9qbwKD1JXci12KWfvPpIfHmo8MCofFSak/IscjIYhSljNnehiKmX6WVnfRafPJThQUm2hVHwQ6CteCmhdW4h9I3BesePrvb6Y18iBmVtM1+t+3BzkUdUSrE+64v59vpeJaUwKYh4znVtEwYsexDNE0lXsPm0VEwGLvo8AG16xBSbhXnBPx7LRHDBLMV6QnnyktFjD3CT8K2P3/vdvrdsBZUMdLdl1pW48J6cUOXF6HlWxH6sKKJn7K0ARdzTyG8SYSphHQoKTjZLsVkkl+7lnR5d/4iPtBcEYvJb/nPoBZS8ikEly/juVjNffP1FwQ7jL5jVJDhteoKeX0cHwpj1I6ZFumQF2QT4Bk3Vgw81PyzTgaQdQKcRxbvVZJr0oNS8fD2RV7","iv":"qVXcV9VcQJwFRRIdPQ6V7g==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"Pt3el1fs5umZhwA/8NHTC8GB20d2N8oQzTgHP6b/Kf8="}'
   );
   console.log(JSON.stringify(result));
 }
