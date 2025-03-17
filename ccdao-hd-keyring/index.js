@@ -44,14 +44,6 @@ export default class CCDAOHDKeyring {
     } else {
       this.wallets = [];
     }
-
-    if (this.mnemonic) {
-      this._initFromMnemonic(this.mnemonic);
-    }
-
-    if (opts.numberOfAccounts) {
-      await this.addAccount(opts.numberOfAccounts);
-    }
   }
 
   async addAccount(mnemonic) {
@@ -75,11 +67,44 @@ export default class CCDAOHDKeyring {
       children: [],
     });
     this.wallets = this.wallets.concat(newWallets);
-    console.log("addAccount", this.wallets);
-    return newWallets.map((w) => w.address);
+    //console.log("addAccount", this.wallets);
+    return newWallets;
   }
 
-  async
+  async deriveSubAccount(id, chain) {
+    //const wallet = this.wallets.find((w) => w.id === id);
+    const wallet = this.wallets[0]
+    if (!wallet) {
+        console.log("deriveSubAccount", "wallet not found", id);
+    }
+    const hd = HDWallet.fromMnemonic({
+      mnemonic: wallet.data,
+      language: "english",
+    });
+    const children = wallet.children.filter((c) => c.path.chain === chain);
+    let index = 0;
+    if (children.length > 0) {
+      const indexs = children.map((c) => parseInt(c.path.index));
+      index = Math.max(...indexs) + 1;
+    }
+    const hdWallet = hd.deriveWallet({ chain, account: 0, index });
+
+    return {
+      address: hdWallet.address(),
+      path: hdWallet.path(),
+      id: uuidv4(),
+    };
+  }
+
+  async addSubAccount(id, account) {
+    //const wallet = this.wallets.find((w)=>w.id===id)
+    const wallet = this.wallets[0]
+    wallet.children.push(account)
+  }
+
+  async getWallets(){
+    console.log("getWallets", JSON.stringify(this.wallets));
+  }
 
   async getAccounts() {
     return this.wallets.map((w) => w.address);
