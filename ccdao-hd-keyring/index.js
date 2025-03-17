@@ -75,8 +75,11 @@ export default class CCDAOHDKeyring {
       children: [],
     });
     this.wallets = this.wallets.concat(newWallets);
+    console.log("addAccount", this.wallets);
     return newWallets.map((w) => w.address);
   }
+
+  async
 
   async getAccounts() {
     return this.wallets.map((w) => w.address);
