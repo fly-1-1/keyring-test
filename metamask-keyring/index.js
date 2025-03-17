@@ -1,5 +1,7 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
+import { hdWallet } from "jcc_wallet";
+const { HDWallet } = hdWallet;
 
 import {
   keyringBuilderFactory,
@@ -46,26 +48,28 @@ async function testCCDAOHDKeyring() {
     "insane father swing truth twice blanket apart hollow enemy wink vault approve";
 
   //await keyringController.createNewVaultAndKeychain("password")//await keyringController.createNewVaultAndRestore("password",mnemonic);
-  await keyringController.createNewVaultAndRestore("password", mnemonic);
-  await keyringController.submitPassword("password");
+  await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic);
+  await keyringController.submitPassword("Gcc123456.");
 
   await keyringController.addNewKeyring(CCDAOHDKeyring.type);
 
   const CCDAOHdSelector = { type: CCDAOHDKeyring.type };
 
   await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
-    const a1 = await keyring.addAccount();
-    console.log("成功创建SWTC账户:", a1);
-    // const swtcPrivateKey = await keyring.exportAccount(a1[0]);
-    // console.log("导出SWTC账户私钥:", swtcPrivateKey);
+    await keyring.addAccount(2);
+    //await keyring.addAccount();
+
+    const accounts =  await keyring.getAccounts()
+    console.log(accounts)
+  
   });
 }
 
 // decode vault
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
-    "password",
-   '{"data":"xDusR7cVr5eCEj6C9xLZyBgWU5q1lArKPTKn7FVlFt5z2vGFomr9s8lU1dozQ3ImkOXJtHe2tfYm4LrudmJ8H26zZUcTfhtjObKFo3PbGMCg8sMudyiHTnOBU2r+YuBpJeSCQdhqfRYX/RuTEFW55N9xQ7zWyuho8WdKsZIYA6EAhxTs513GXKIAj3j+R0Nux7I15gg+ghb8rfO1IF0d0zs7djwOOv4xk6Ch0RICc6xEQZVsFNbA1+dYnfv1CKpxhN+z5Ye991orm/xE8zN/n6bvTpGF2jtK8hgPRtYNWfV+K2/7iJpF83h2pdO+ZNFJM7oCvjQrssml03Bi3y0Ww0NDg/IEQMtaK/y7h3r6W8QkZdOcYrzl2WWSAwt8cmtnrsWQjUGAsW/cfCMj9JEgIUzTDlAKR02Fp1eH8WQvRNy0gfge13qS+zHz1OOr102f+3+wVmJ/qpFhFk/3XLX1V4KXi1kf2IlnlwQwso16iBhkHdyBwTlmDFOR6A7dPnEbtQcrxlq08sJu5uKWgcI3T2XG9BqefJ6uHyx2S+nx339SJvinvAm37uIhctqCYFhCqFcnV28+Nv6fe0Je0l0Czpf9vtKQ77hh5IpDKNzTULLmadqRte8FhvmkIF0PuO6jKgag72rtSoKZ/y4YtrQuScRoLln3A5KtOOxg6ppsdAC5pVMCz6sWjJ8+Zn0Nq25YzwPK+NWWwp/UgKziYqhCHynZrfrJClnxw4OveWKhAnNgqi8/ahLv/VeQMyMl6NmD8ThyYoKk19hvjMxORE87yOiTuSuHqHFZnHPD69dwJOlwjsPqu/iJn1K+FmZ5zm86QYgjzlKwIKDwo54XsS1JBUXW3o5/otUb/EZCVEN7FYcUQnMpW6CRQKrCmv6aYj7QysqZsFYnBywzgZeY2gcn88HLUQ==","iv":"33D/rbBDxtWdz69LhlkIdw==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"ihcuY+HdIO1IL+d9JavzRAom1aEUC7/5xlaIu+WgsLQ="}'
+    "Gcc123456.",
+   '{"data":"CQU8/cneE+VXWLOhbjdBxEzZwnllDcCbMOi83NDxiw2HLH17T4nyu1p2m2UQI+DuMRwveKrBX2TCmd8UPnQ7IG4oCvaN1nO5vVH6xyV0xdXFKRI8ZKxQI4+ogzbX7Lz89tRh0LZOOsO2JEzhUChaav2tWAkBZ48ZljPL2S8W4YytDbNHJ/kLKQdwogs6kv0r9fsMEpG42bAbzrsND/HoG5ihuzHx5OG0fI/U+k79cedK+iyW8SVo2m7lfRG/DT+QVqdNPDbxUyGagJydPQehdHZgnMrPMS2fpA3teTPtE2MudRkW/9d4BKO6KmfbgzaQ3MIA65X/TK9SSPgIAmp9WXIx8EQcIIdzjhDjdF8vf23FruHhpHpsu7cHKBqvf+Z6DTjZo3fmGtYysJkKzWuRSBlSX4/zreCKdZXvGoRuY2vBch/TWfZJHW1qCYuxXpdd9/EGxUI0XCep17TBeW0RJjyEOKBmSPw8HweFgsv4UmtQYKXzhV2+WIFBmE4Og0cUWuj8+8Spuuhf0y28BaViK8zOZNrPZAU1uE0WJY8o9WMkU68SUPGgt9TBAc6i+2Ros2jANYSpwZ9/10revPHXb+ccPtrri5Dr/itJSNnZ9lY7H7xIZAVbSUlvblytfk4YUVnpQZa59EDKeT10jB6/w4zLyYPuP7ypBr80mtku+zcP/c7OL93zqL67/oeueTzORsoMQXNP+lfyfdYO4BMsuH4Jqoz5LOt/NXHuFnLAhMwFLGzPjaBtaqbGCMhfNE9CnGs/6It61UAuPb6IQy8c6Fkcs4qWjrVnhLsnG1E5W5Kjo46YJI54JEtEmQt9qyrPmCpsgpI8K8Df6t6QjAtV4ZNKH0Df2j1ftbjvreYEchqIpd2y+8Psgr0HykHFjOcDyRIj8AdjXrz+OI2+AVy2nPQCRhaUXnXeeoo6v7FYM42egb+tHzAuttHpYcMxHJ9IYrB/aknBb4KJ5xX6/r7RsG1zQrxkDk6RYm6kOGttjXi6Jxb0Ig0XOot8NGmqLqbYS4qR6nNVXLB/RzBULvooVNWs0Qo/ZnRAKG4MBb9bn1VsXZzc3biL/MGQRtX73kZMT6qswRsBgRAghkeNzfDDQoTmJFqAjcyH0S8Z0cgLSYxXkqXJqWxglPrWe+59NwGtgh53S+ZsNKEJvNQh6syHyEt6bJIdCW+HUlznyWZi2ob+MuwSe5fmS43vXX5P8QsYyMBqz6uJ1jus5BQwA6KgEI96HHCLoMnEgp8aa7CKY1XilXCwlIWcNUNvsZLoWZOINP1LBZv6ZvFFHuh1DasYo7TPfYxGhMZHVTBz2ExLy3xiazGXKjmcrXSnAT7+3CfgBAZo/kMBs79YyHaUFaguzkjuuRM=","iv":"DehvX93/TC2Tqi8C7tFBug==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"bPsPHmxXopa4Jr4aUBnZC+IikQT4K4WRJUpaG/hBeYs="}'
   );
   console.log(JSON.stringify(result));
 }

@@ -22,7 +22,9 @@
     "@metamask/keyring-controller": "^20.0.0",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.5",
-    "ethereumjs-wallet": "^1.0.2"
+    "ethereumjs-wallet": "^1.0.2",
+    "@noble/secp256k1": "^2.2.3",
+    "jcc_wallet": "^3.0.3"
   },
   "devDependencies": {
     "@ethereumjs/tx": "^5.4.0",

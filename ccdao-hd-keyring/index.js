@@ -20,24 +20,30 @@ export default class CCDAOHDKeyring {
 
   async serialize() {
     return {
-      data: {
-        mnemonic: this.mnemonic,
-        wallets: this.wallets.map(w => ({
-          address: w.address,
-          path: w.path,
-          id: w.id,
-          children: w.children
-        }))
-      }
+      data: this.mnemonic,
+      wallets: this.wallets.map(wallet => ({
+        data: wallet.data,
+        address: wallet.address,
+        path: wallet.path,
+        id: wallet.id,
+        children: wallet.children || []
+      }))
     };
   }
 
   async deserialize(opts = {}) {
-    this.mnemonic = (opts.data && opts.data.mnemonic) || null;
-    this.wallets = ((opts.data && opts.data.wallets) || []).map(w => ({
-      ...w,
-      data: this.mnemonic
-    }));
+    this.mnemonic = opts.data || null;
+    if (opts.wallets && Array.isArray(opts.wallets)) {
+      this.wallets = opts.wallets.map(wallet => ({
+        data: this.mnemonic,
+        address: wallet.address,
+        path: wallet.path,
+        id: wallet.id,
+        children: wallet.children || []
+      }));
+    } else {
+      this.wallets = [];    
+    }
 
     if (this.mnemonic) {
       this._initFromMnemonic(this.mnemonic);
