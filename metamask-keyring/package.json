@@ -18,6 +18,7 @@
   "author": "MetaMask",
   "license": "ISC",
   "dependencies": {
+    "@metamask/browser-passworder": "^6.0.0",
     "@metamask/keyring-controller": "^20.0.0",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.5",
