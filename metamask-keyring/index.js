@@ -1,7 +1,7 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 import { hdWallet } from "jcc_wallet";
-const { HDWallet } = hdWallet;
+const { HDWallet ,BIP44Chain} = hdWallet;
 import chains from "./support-chains.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -65,7 +65,7 @@ async function testCCDAOHDKeyring() {
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
     "Gcc123456.",
-    '{"data":"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","iv":"ibjY2McaQwktfP4ktBeMYg==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"/JtlLh4TyfASK33tCsAGdSf2FuSGHDxvCaQF/wg3eCc="}'
+    '{"data":"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","iv":"A8ymR8OnJkB+vkxLoA0Btw==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"f38OoheQ31LXWsCTwGibbVN6mEHZT00FkA2yXswM1m8="}'
   );
   console.log(JSON.stringify(result));
 }
@@ -78,23 +78,24 @@ async function initHDWallet() {
   
   await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
     const wallet = await keyring.addAccount(HDWallet.generateMnemonic());
-
-    console.log("walllet",wallet);
-
     for (const chain of chains) {
       const subAccount = await keyring.deriveSubAccount(
-        uuidv4(),
+        wallet.id,
         chain.chainId
       );
-      await keyring.addSubAccount(wallet, subAccount);
+      await keyring.addSubAccount( wallet.id, subAccount);
     }
 
-    //keyring.getWallets()
+    const subPolAccount = await keyring.deriveSubAccount(
+      wallet.id,
+      BIP44Chain.POLYGON
+    )
+    await keyring.addSubAccount( wallet.id, subPolAccount);
   });
 }
 
-//initHDWallet();
+initHDWallet();
 
 //testCCDAOHDKeyring();
 
-decodeVault();
+//decodeVault();

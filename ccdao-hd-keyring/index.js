@@ -68,12 +68,11 @@ export default class CCDAOHDKeyring {
     });
     this.wallets = this.wallets.concat(newWallets);
     //console.log("addAccount", this.wallets);
-    return newWallets;
+    return newWallets[0];
   }
 
   async deriveSubAccount(id, chain) {
-    //const wallet = this.wallets.find((w) => w.id === id);
-    const wallet = this.wallets[0]
+    const wallet = this.wallets.find((w) => w.id === id);
     if (!wallet) {
         console.log("deriveSubAccount", "wallet not found", id);
     }
@@ -97,13 +96,16 @@ export default class CCDAOHDKeyring {
   }
 
   async addSubAccount(id, account) {
-    //const wallet = this.wallets.find((w)=>w.id===id)
-    const wallet = this.wallets[0]
+    const wallet = this.wallets.find((w)=>w.id===id)
     wallet.children.push(account)
   }
 
   async getWallets(){
     console.log("getWallets", JSON.stringify(this.wallets));
+  }
+
+   getId(){
+    return this.wallets[0].id;
   }
 
   async getAccounts() {
