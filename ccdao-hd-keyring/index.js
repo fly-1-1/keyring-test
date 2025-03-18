@@ -6,10 +6,6 @@ export default class CCDAOHDKeyring {
   static type = "CCDAO HD Keyring";
   type = CCDAOHDKeyring.type;
   mnemonic;
-  // seed
-  // root
-  // hdWallet
-  // hdPath
   constructor(opts = {}) {
     this.mnemonic = null;
     this.path = "";

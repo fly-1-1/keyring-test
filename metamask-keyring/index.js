@@ -1,9 +1,8 @@
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 import { hdWallet } from "jcc_wallet";
-const { HDWallet ,BIP44Chain} = hdWallet;
+const { HDWallet, BIP44Chain } = hdWallet;
 import chains from "./support-chains.js";
-import { v4 as uuidv4 } from "uuid";
 
 import {
   keyringBuilderFactory,
@@ -75,7 +74,7 @@ async function initHDWallet() {
   await keyringController.submitPassword("Gcc123456.");
   await keyringController.addNewKeyring(CCDAOHDKeyring.type);
   const CCDAOHdSelector = { type: CCDAOHDKeyring.type };
-  
+
   await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
     const wallet = await keyring.addAccount(HDWallet.generateMnemonic());
     for (const chain of chains) {
@@ -83,14 +82,14 @@ async function initHDWallet() {
         wallet.id,
         chain.chainId
       );
-      await keyring.addSubAccount( wallet.id, subAccount);
+      await keyring.addSubAccount(wallet.id, subAccount);
     }
 
     const subPolAccount = await keyring.deriveSubAccount(
       wallet.id,
       BIP44Chain.POLYGON
-    )
-    await keyring.addSubAccount( wallet.id, subPolAccount);
+    );
+    await keyring.addSubAccount(wallet.id, subPolAccount);
   });
 }
 
