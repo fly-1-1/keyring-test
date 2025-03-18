@@ -1,6 +1,12 @@
 import { hdWallet } from "jcc_wallet";
 const { HDWallet } = hdWallet;
 import { v4 as uuidv4 } from "uuid";
+const bip39 = require("bip39");
+const { Wallet } = require("xrpl");
+const { hdkey } = require("@ethereumjs/wallet");
+const TronWeb = require("tronweb");
+const eosHdKey = require("hdkey");
+const ecc = require("eosjs-ecc");
 
 export default class CCDAOHDKeyring {
   static type = "CCDAO HD Keyring";
@@ -9,7 +15,7 @@ export default class CCDAOHDKeyring {
   constructor(opts = {}) {
     this.mnemonic = null;
     this.path = "";
-    this.wallets = [];
+    this.keyrings = [];
     this.root = null;
     this.deserialize(opts);
   }
@@ -17,33 +23,33 @@ export default class CCDAOHDKeyring {
   async serialize() {
     return {
       data: this.mnemonic,
-      wallets: this.wallets.map((wallet) => ({
-        data: wallet.data,
-        address: wallet.address,
-        path: wallet.path,
-        id: wallet.id,
-        children: wallet.children || [],
+      keyrings: this.keyrings.map((keyring) => ({
+        data: keyring.data,
+        address: keyring.address,
+        path: keyring.path,
+        id: keyring.id,
+        children: keyring.children || [],
       })),
     };
   }
 
   async deserialize(opts = {}) {
     this.mnemonic = opts.data || null;
-    if (opts.wallets && Array.isArray(opts.wallets)) {
-      this.wallets = opts.wallets.map((wallet) => ({
+    if (opts.keyrings && Array.isArray(opts.keyrings)) {
+      this.keyrings = opts.keyrings.map((keyring) => ({
         data: this.mnemonic,
-        address: wallet.address,
-        path: wallet.path,
-        id: wallet.id,
-        children: wallet.children || [],
+        address: keyring.address,
+        path: keyring.path,
+        id: keyring.id,
+        children: keyring.children || [],
       }));
     } else {
-      this.wallets = [];
+      this.keyrings = [];
     }
   }
 
   async addAccount(mnemonic) {
-    const newWallets = [];
+    const newKeyrings = [];
     if (mnemonic) {
       this.mnemonic = mnemonic;
     } else if (!this.mnemonic) {
@@ -55,28 +61,27 @@ export default class CCDAOHDKeyring {
       language: "english",
     });
 
-    newWallets.push({
+    newKeyrings.push({
       data: this.mnemonic,
       address: hd.address(),
       path: hd.path(),
       id: uuidv4(),
       children: [],
     });
-    this.wallets = this.wallets.concat(newWallets);
-    //console.log("addAccount", this.wallets);
-    return newWallets[0];
+    this.keyrings = this.keyrings.concat(newKeyrings);
+    return newKeyrings[0];
   }
 
   async deriveSubAccount(id, chain) {
-    const wallet = this.wallets.find((w) => w.id === id);
-    if (!wallet) {
-        console.log("deriveSubAccount", "wallet not found", id);
+    const keyring = this.keyrings.find((k) => k.id === id);
+    if (!keyring) {
+      console.log("deriveSubAccount", "keyring not found", id);
     }
     const hd = HDWallet.fromMnemonic({
-      mnemonic: wallet.data,
+      mnemonic: keyring.data,
       language: "english",
     });
-    const children = wallet.children.filter((c) => c.path.chain === chain);
+    const children = keyring.children.filter((c) => c.path.chain === chain);
     let index = 0;
     if (children.length > 0) {
       const indexs = children.map((c) => parseInt(c.path.index));
@@ -92,19 +97,123 @@ export default class CCDAOHDKeyring {
   }
 
   async addSubAccount(id, account) {
-    const wallet = this.wallets.find((w)=>w.id===id)
-    wallet.children.push(account)
+    const keyring = this.keyrings.find((k) => k.id === id);
+    keyring.children.push(account);
   }
 
-  async getWallets(){
-    console.log("getWallets", JSON.stringify(this.wallets));
+  async getKeyrings() {
+    console.log("getKeyrings", JSON.stringify(this.keyrings));
   }
 
-   getId(){
-    return this.wallets[0].id;
+  rootKeyrings() {
+    const keyrings = this.keyrings.filter((keyring) => Boolean(keyring.path));
+    return keyrings;
   }
 
   async getAccounts() {
-    return this.wallets.map((w) => w.address);
+    return this.keyrings.map((k) => k.address);
   }
+
+  rootKeyrings() {
+    const keyrings = this.keyrings.filter((keyring) => Boolean(keyring.path));
+    return keyrings;
+  }
+
+  subKeyrings() {
+    const keyrings = this.keyrings.filter((keyring) => Boolean(keyring.path));
+    const subs = keyrings
+      .map((account) => {
+        const newChildren = account.children.map((child) => {
+          return {
+            parentID: account.id,
+            ...child,
+          };
+        });
+        return newChildren;
+      })
+      .flat();
+    return subs;
+  }
+
+  getKeyrings() {
+    return [...this.rootKeyrings(), ...this.subKeyrings()];
+  }
+
+
+
+  derivePrivateKey(address) {
+    const keyrings = this.getKeyrings();
+    const keyring = keyrings.find((t) => t.address.toLowerCase() === address.toLowerCase() && !t.children);
+    let secret;
+    if (!keyring) {
+      throw new Error("No keyring found for address");
+    }
+    if (!keyring.path) {
+      if (bip39.validateMnemonic(keyring.data)) {
+        if (keyring.chain === BIP44Chain.SWTC) {
+          const wallet = HDWallet.fromMnemonic({
+            mnemonic: keyring.data,
+            language: "english"
+          });
+          secret = wallet.keypair().privateKey;
+        } else if (keyring.chain === BIP44Chain.RIPPLE) {
+          const wallet = Wallet.fromMnemonic(keyring.data);
+          secret = wallet.privateKey;
+        } else if (keyring.chain === BIP44Chain.TRON) {
+          const wallet = TronWeb.utils.accounts.generateAccountWithMnemonic(keyring.data);
+          secret = wallet.privateKey;
+        } else {
+          const seed = bip39.mnemonicToSeedSync(keyring.data);
+          const hd = hdkey.EthereumHDKey.fromMasterSeed(seed);
+          secret = hd.derivePath("m/44'/60'/0'/0/0").getWallet().getPrivateKeyString();
+        }
+      } else {
+        secret = keyring.data;
+      }
+    } else {
+      const root = keyrings.find((k) => keyring.parentID === k.id);
+
+      const { data } = root;
+      const wallet = HDWallet.fromMnemonic({
+        mnemonic: data,
+        language: "english"
+      });
+      const { chain, account, index } = keyring.path;
+      const sub = wallet.deriveWallet({ chain, account, index });
+      secret = sub.keypair().privateKey;
+    }
+    return secret;
+  }
+
+  deriveEosPrivateKey(id) {
+    const keyrings = this.getKeyrings();
+    const keyring = keyrings.find((t) => t.id.toLowerCase() === id.toLowerCase() && !t.children);
+    let secret;
+    if (!keyring) {
+      throw new Error("No keyring found for address");
+    }
+    if (!keyring.path) {
+      if (bip39.validateMnemonic(keyring.data)) {
+        const seed = bip39.mnemonicToSeedSync(keyring.data);
+        const master = eosHdKey.fromMasterSeed(seed);
+        const node = master.derive("m/44'/194'/0'/0/0");
+        return ecc.PublicKey(node._publicKey).toString();
+      } else {
+        secret = keyring.data;
+      }
+    } else {
+      const root = keyrings.find((k) => keyring.parentID === k.id);
+
+      const { data } = root;
+      const wallet = HDWallet.fromMnemonic({
+        mnemonic: data,
+        language: "english"
+      });
+      const { chain, account, index } = keyring.path;
+      const sub = wallet.deriveWallet({ chain, account, index });
+      secret = sub.keypair().privateKey;
+    }
+    return secret;
+  }
+
 }
