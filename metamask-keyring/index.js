@@ -3,7 +3,7 @@ const require = createRequire(import.meta.url);
 import { hdWallet } from "jcc_wallet";
 const { HDWallet, BIP44Chain } = hdWallet;
 import chains from "./support-chains.js";
-import EosKeyring from "../eos-keyring/index.js";
+import CCDAOHDKeyring from "../ccdao-hd-keyring/index.js";
 
 import {
   keyringBuilderFactory,
@@ -26,7 +26,7 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
-  keyringBuilders: [keyringBuilderFactory(EosKeyring)],
+  keyringBuilders: [keyringBuilderFactory(CCDAOHDKeyring)],
 });
 
 keyringControllerMessenger.subscribe(
@@ -36,10 +36,14 @@ keyringControllerMessenger.subscribe(
   }
 );
 
-const mnemonic1 =
-  "alcohol topple insane what enjoy model equip settle two habit mandate next";
-const mnemonic2 =
-  "scrub slow view debate culture suspect other search unfair popular miss mouse";
+const mnemonic1 = Buffer.from(
+  "acoustic shine gadget slam fiscal gift oval attend couple boat thought worth",
+  "utf-8"
+);
+const mnemonic2 = Buffer.from(
+  "scrub slow view debate culture suspect other search unfair popular miss mouse",
+  "utf-8"
+);
 // decode vault
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
@@ -50,23 +54,29 @@ async function decodeVault() {
   console.log(JSON.stringify(result));
   //console.log(JSON.stringify(result));
   //console.log(String.fromCharCode(...result.vault[0].data.mnemonic));
-
 }
 
 async function test01() {
-  await keyringController.createNewVaultAndRestore("Gcc123456.",mnemonic1);
+  await keyringController.createNewVaultAndRestore("Gcc123456.", {
+    mnemonic: mnemonic1,
+  });
   await keyringController.submitPassword("Gcc123456.");
+  await keyringController.addNewKeyring(CCDAOHDKeyring.type);
 
-  const hdKeyringSelector = { type: HdKeyring.type };
+  const hdKeyringSelector = { type: CCDAOHDKeyring.type };
   await keyringController.withKeyring(
     hdKeyringSelector,
     async ({ keyring }) => {
-      keyring.addAccounts(1);
-      console.log(keyring);
+      keyring.addAccounts(1, BIP44Chain.ETH);
+      keyring.addAccounts(1, BIP44Chain.ETH);
+
+      keyring.addAccounts(1, BIP44Chain.TRON);
+
+      console.log(keyring.getAccounts());
     }
   );
 
-  console.log(keyringController.state.keyrings[0].accounts)
+  //console.log(keyringController.state.keyrings[0].accounts)
 
   //decodeVault();
 }

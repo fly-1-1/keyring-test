@@ -1,51 +1,63 @@
 import { hdWallet } from "jcc_wallet";
-import { BIP44Chain } from "jcc_wallet/lib/hd";
-
-import { v4 as uuidv4 } from "uuid";
+const { HDWallet, BIP44Chain } = hdWallet;
 
 export default class CCDAOHDKeyring {
   static type = "CCDAO HD Keyring";
   type = CCDAOHDKeyring.type;
+
   mnemonic;
-  wallets = [];
   mutichainAccountLength = new Map();
   numberOfAccounts;
+
+  constructor(mnemonic) {
+    this.mnemonic = mnemonic;
+  }
 
   async serialize() {
     return {
       type: this.type,
       mnemonic: this.mnemonic,
-      wallets: this.wallets.map((wallet) => wallet.serialize()),
+      wallets: this.wallets.map((wallet) => ({
+        address: wallet.address(),
+        keypair: wallet.keypair().toString("hex"),
+        path: wallet.path(),
+      })),
     };
   }
 
   async deserialize(obj) {
     this.type = obj.type;
     this.mnemonic = obj.mnemonic;
-    if (this.mnemonic) {
-      this._initFromMnemonic(this.mnemonic);
-    }
-    this.wallets = obj.wallets.map((wallet) => hdWallet.HDWallet.deserialize(wallet));
+    this.wallets = obj.wallets.map(
+      (walletData) =>
+        new HDWallet({
+          keypair: Buffer.from(walletData.keypair, "hex"),
+          path: walletData.path,
+        })
+    );
     this.numberOfAccounts = this.wallets.length;
     return this;
   }
 
-  async addAccounts(n = 1, chainId) {
+  async addAccounts(n = 1, chain = BIP44Chain.SWTC) {
     const newWallets = [];
-    if (!this.mnemonic) {
-      this.mnemonic = bip39.generateMnemonic();
-      this._initFromMnemonic(this.mnemonic);
-    }
-    this.root = hdWallet.fromMnemonic({ mnemonic: this.mnemonic, language: "english" });
-    const index = this.mutichainAccountLength.get(chainId) || 0;
-    
+    const hd = HDWallet.fromMnemonic({
+      mnemonic: this.mnemonic,
+      language: "english",
+    });
+    const index = this.mutichainAccountLength.get(chain) || 0;
+
     for (let i = 0; i < n; i++) {
-     const wallet = this.root.deriveWallet({ chainId, account: 0, index: index + i });
-     this.mutichainAccountLength.set(chainId, index + i + 1);
-     newWallets.push(wallet);
-     this.wallets.push(wallet);
-     this.numberOfAccounts = this.wallets.length;
+      const wallet = hd.deriveWallet({ chain, account: 0, index: index + i });
+      this.mutichainAccountLength.set(chain, index + i + 1);
+      newWallets.push(wallet);
+      this.wallets.push(wallet);
+      this.numberOfAccounts = this.wallets.length;
     }
-    return newWallets.map(w => w.getAddress());
+    return newWallets.map((w) => w.address());
+  }
+
+  async getAccounts() {
+    return this.wallets.map((w) => w.address());
   }
 }
