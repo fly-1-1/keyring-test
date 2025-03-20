@@ -939,10 +939,22 @@
 
 "@metamask/eth-hd-keyring@^11.0.0":
   version "11.0.0"
-  resolved "https://registry.npmmirror.com/@metamask/eth-hd-keyring/-/eth-hd-keyring-11.0.0.tgz"
+  resolved "https://registry.npmjs.org/@metamask/eth-hd-keyring/-/eth-hd-keyring-11.0.0.tgz"
   integrity sha512-QYs5ieXdrwhXnbo4u8exseSsPtKfLpGDXT7BVivbjYCV6H0Ksn+DiIJ785CnGs/GWdao29KFiQ8mwrj76DDd1A==
   dependencies:
     "@ethereumjs/util" "^8.1.0"
+    "@metamask/eth-sig-util" "^8.2.0"
+    "@metamask/key-tree" "^10.0.2"
+    "@metamask/scure-bip39" "^2.1.1"
+    "@metamask/utils" "^11.1.0"
+    ethereum-cryptography "^2.1.2"
+
+"@metamask/eth-hd-keyring@^12.1.0":
+  version "12.1.0"
+  resolved "https://registry.npmjs.org/@metamask/eth-hd-keyring/-/eth-hd-keyring-12.1.0.tgz"
+  integrity sha512-jL7l1oPasTClknOuT0LleqyV9WbuXdM7fU5POramgjyh+sl++PyRh1W6cZzskNEXSpPH08pVy1Xh/LU7rNBPqQ==
+  dependencies:
+    "@ethereumjs/util" "^9.1.0"
     "@metamask/eth-sig-util" "^8.2.0"
     "@metamask/key-tree" "^10.0.2"
     "@metamask/scure-bip39" "^2.1.1"

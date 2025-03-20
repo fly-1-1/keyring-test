@@ -19,11 +19,12 @@
   "license": "ISC",
   "dependencies": {
     "@metamask/browser-passworder": "^6.0.0",
+    "@metamask/eth-hd-keyring": "^12.1.0",
     "@metamask/keyring-controller": "^20.0.0",
+    "@noble/secp256k1": "^2.2.3",
     "eth-sig-util": "^3.0.1",
     "ethereumjs-util": "^7.1.5",
     "ethereumjs-wallet": "^1.0.2",
-    "@noble/secp256k1": "^2.2.3",
     "jcc_wallet": "^3.0.3"
   },
   "devDependencies": {

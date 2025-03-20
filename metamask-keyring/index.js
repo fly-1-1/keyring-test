@@ -3,17 +3,14 @@ const require = createRequire(import.meta.url);
 import { hdWallet } from "jcc_wallet";
 const { HDWallet, BIP44Chain } = hdWallet;
 import chains from "./support-chains.js";
+import EosKeyring from "../eos-keyring/index.js";
 
 import {
   keyringBuilderFactory,
   KeyringController,
 } from "@metamask/keyring-controller";
 import { Messenger } from "@metamask/base-controller";
-import EosKeyring from "../eos-keyring/index.js";
-import RippleKeyring from "../ripple-keyring/index.js";
-import EosHdKeyring from "../eos-hd-keyring/index.js";
-import SwtcKeyring from "../swtc-keyring/lib/swtc-keyring.js";
-import CCDAOHDKeyring from "../ccdao-hd-keyring/index.js";
+import { HdKeyring } from "@metamask/eth-hd-keyring";
 const encryptor = require("@metamask/browser-passworder");
 
 let controllerMessenger = new Messenger();
@@ -29,72 +26,49 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
-  keyringBuilders: [
-    keyringBuilderFactory(EosKeyring),
-    keyringBuilderFactory(RippleKeyring),
-    keyringBuilderFactory(EosHdKeyring),
-    keyringBuilderFactory(SwtcKeyring),
-    keyringBuilderFactory(CCDAOHDKeyring),
-  ],
+  keyringBuilders: [keyringBuilderFactory(EosKeyring)],
 });
 
 keyringControllerMessenger.subscribe(
   "KeyringController:stateChange",
   (state) => {
-    console.log("Keyring state changed:", state);
+    //console.log("Keyring state changed:", JSON.stringify(state));
   }
 );
 
-//Test CCDAOHDKeyring
-
-async function testCCDAOHDKeyring() {
-  await keyringController.createNewVaultAndKeychain("Gcc123456.");
-  await keyringController.submitPassword("Gcc123456.");
-  await keyringController.addNewKeyring(CCDAOHDKeyring.type);
-  const CCDAOHdSelector = { type: CCDAOHDKeyring.type };
-
-  await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
-    await keyring.addAccount(HDWallet.generateMnemonic());
-    const accounts = await keyring.getAccounts();
-    console.log(accounts);
-  });
-}
-
+const mnemonic1 =
+  "alcohol topple insane what enjoy model equip settle two habit mandate next";
+const mnemonic2 =
+  "scrub slow view debate culture suspect other search unfair popular miss mouse";
 // decode vault
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
     "Gcc123456.",
-    '{"data":"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","iv":"A8ymR8OnJkB+vkxLoA0Btw==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"f38OoheQ31LXWsCTwGibbVN6mEHZT00FkA2yXswM1m8="}'
+    keyringController.state.vault
+    // '{"data":"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","iv":"43gL21kMC2j8ZIcmTj4HYQ==","keyMetadata":{"algorithm":"PBKDF2","params":{"iterations":900000}},"salt":"zd0qDQ7J8Jl9/cZnJhUuPz+wxJzyE18A/rx1M7sgeP4="}'
   );
   console.log(JSON.stringify(result));
+  //console.log(JSON.stringify(result));
+  //console.log(String.fromCharCode(...result.vault[0].data.mnemonic));
+
 }
 
-async function initHDWallet() {
-  await keyringController.createNewVaultAndKeychain("Gcc123456.");
+async function test01() {
+  await keyringController.createNewVaultAndRestore("Gcc123456.",mnemonic1);
   await keyringController.submitPassword("Gcc123456.");
-  await keyringController.addNewKeyring(CCDAOHDKeyring.type);
-  const CCDAOHdSelector = { type: CCDAOHDKeyring.type };
 
-  await keyringController.withKeyring(CCDAOHdSelector, async ({ keyring }) => {
-    const wallet = await keyring.addAccount(HDWallet.generateMnemonic());
-    for (const chain of chains) {
-      const subAccount = await keyring.deriveSubAccount(
-        wallet.id,
-        chain.chainId
-      );
-      await keyring.addSubAccount(wallet.id, subAccount);
+  const hdKeyringSelector = { type: HdKeyring.type };
+  await keyringController.withKeyring(
+    hdKeyringSelector,
+    async ({ keyring }) => {
+      keyring.addAccounts(1);
+      console.log(keyring);
     }
+  );
 
-    const subPolAccount = await keyring.deriveSubAccount(
-      wallet.id,
-      BIP44Chain.POLYGON
-    );
-    await keyring.addSubAccount(wallet.id, subPolAccount);
-  });
+  console.log(keyringController.state.keyrings[0].accounts)
+
+  //decodeVault();
 }
 
-initHDWallet();
-
-//testCCDAOHDKeyring();
-
-//decodeVault();
+test01();
