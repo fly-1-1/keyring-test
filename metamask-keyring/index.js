@@ -36,7 +36,7 @@ keyringControllerMessenger.subscribe(
 );
 
 const mnemonic1 =
-  "acoustic shine gadget slam fiscal gift oval attend couple boat thought worth";
+  "scrub slow view debate culture suspect other search unfair popular miss mouse";
 
 // decode vault
 async function decodeVault() {
@@ -53,7 +53,7 @@ async function decodeVault() {
 async function test01() {
   await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic1);
   await keyringController.submitPassword("Gcc123456.");
-  await keyringController.addNewKeyring(CCDAOHDKeyring.type,{mnemonic: mnemonic1});
+  await keyringController.addNewKeyring(CCDAOHDKeyring.type);
 
   const hdKeyringSelector = { type: CCDAOHDKeyring.type };
   await keyringController.withKeyring(
@@ -63,7 +63,7 @@ async function test01() {
       keyring.addAccounts(1, BIP44Chain.TRON);
 
      const accounts = await keyring.getAccounts();
-     //console.log(accounts);
+     console.log(accounts);
 
      //console.log(keyring);
 
@@ -73,7 +73,7 @@ async function test01() {
 
   //console.log(keyringController.state.keyrings[0].accounts)
 
-  decodeVault();
+  //decodeVault();
 }
 
 test01();
