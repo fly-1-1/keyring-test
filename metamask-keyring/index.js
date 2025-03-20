@@ -65,7 +65,7 @@ async function test01() {
      const accounts = await keyring.getAccounts();
      console.log(accounts);
 
-     //console.log(keyring);
+     console.log(keyring);
 
        
     }

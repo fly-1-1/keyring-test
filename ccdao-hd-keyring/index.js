@@ -5,13 +5,11 @@ export default class CCDAOHDKeyring {
   static type = "CCDAO HD Keyring";
   type = CCDAOHDKeyring.type;
 
-  mnemonic;
+  wallets = [];
+  mnemonic =
+    "scrub slow view debate culture suspect other search unfair popular miss mouse";
   mutichainAccountLength = new Map();
   numberOfAccounts;
-
-  constructor(mnemonic) {
-    this.mnemonic = mnemonic;
-  }
 
   async serialize() {
     return {
