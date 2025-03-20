@@ -6,34 +6,33 @@ export default class CCDAOHDKeyring {
   type = CCDAOHDKeyring.type;
 
   wallets = [];
-  mnemonic =
-    "scrub slow view debate culture suspect other search unfair popular miss mouse";
+  mnemonic;
   mutichainAccountLength = new Map();
   numberOfAccounts;
+
+  constructor(opts) {
+    console.log("opts", opts);
+    if (opts) {
+      this.mnemonic = opts.mnemonic;
+    } else {
+      this.mnemonic = HDWallet.generateMnemonic();
+    }
+  }
 
   async serialize() {
     return {
       type: this.type,
       mnemonic: this.mnemonic,
-      wallets: this.wallets.map((wallet) => ({
-        address: wallet.address(),
-        keypair: wallet.keypair().toString("hex"),
-        path: wallet.path(),
-      })),
+      numberOfAccounts: this.numberOfAccounts,
+      mutichainAccountLength: Array.from(this.mutichainAccountLength.entries()),
     };
   }
 
   async deserialize(obj) {
     this.type = obj.type;
     this.mnemonic = obj.mnemonic;
-    this.wallets = obj.wallets.map(
-      (walletData) =>
-        new HDWallet({
-          keypair: Buffer.from(walletData.keypair, "hex"),
-          path: walletData.path,
-        })
-    );
     this.numberOfAccounts = this.wallets.length;
+    this.mutichainAccountLength = new Map(obj.mutichainAccountLength);
     return this;
   }
 
