@@ -10,7 +10,6 @@ import {
   KeyringController,
 } from "@metamask/keyring-controller";
 import { Messenger } from "@metamask/base-controller";
-import { HdKeyring } from "@metamask/eth-hd-keyring";
 const encryptor = require("@metamask/browser-passworder");
 
 let controllerMessenger = new Messenger();
@@ -36,14 +35,9 @@ keyringControllerMessenger.subscribe(
   }
 );
 
-const mnemonic1 = Buffer.from(
-  "acoustic shine gadget slam fiscal gift oval attend couple boat thought worth",
-  "utf-8"
-);
-const mnemonic2 = Buffer.from(
-  "scrub slow view debate culture suspect other search unfair popular miss mouse",
-  "utf-8"
-);
+const mnemonic1 =
+  "acoustic shine gadget slam fiscal gift oval attend couple boat thought worth";
+
 // decode vault
 async function decodeVault() {
   const result = await encryptor.decryptWithDetail(
@@ -57,28 +51,29 @@ async function decodeVault() {
 }
 
 async function test01() {
-  await keyringController.createNewVaultAndRestore("Gcc123456.", {
-    mnemonic: mnemonic1,
-  });
+  await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic1);
   await keyringController.submitPassword("Gcc123456.");
-  await keyringController.addNewKeyring(CCDAOHDKeyring.type);
+  await keyringController.addNewKeyring(CCDAOHDKeyring.type,{mnemonic: mnemonic1});
 
   const hdKeyringSelector = { type: CCDAOHDKeyring.type };
   await keyringController.withKeyring(
     hdKeyringSelector,
     async ({ keyring }) => {
-      keyring.addAccounts(1, BIP44Chain.ETH);
-      keyring.addAccounts(1, BIP44Chain.ETH);
-
+      keyring.addAccounts(1, BIP44Chain.SWTC);
       keyring.addAccounts(1, BIP44Chain.TRON);
 
-      console.log(keyring.getAccounts());
+     const accounts = await keyring.getAccounts();
+     //console.log(accounts);
+
+     //console.log(keyring);
+
+       
     }
   );
 
   //console.log(keyringController.state.keyrings[0].accounts)
 
-  //decodeVault();
+  decodeVault();
 }
 
 test01();
