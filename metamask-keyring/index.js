@@ -35,7 +35,8 @@ keyringControllerMessenger.subscribe(
   }
 );
 
-const mnemonic ="scrub slow view debate culture suspect other search unfair popular miss mouse";
+const mnemonic =
+  "scrub slow view debate culture suspect other search unfair popular miss mouse";
 
 // decode vault
 async function decodeVault() {
@@ -52,9 +53,10 @@ async function decodeVault() {
 async function test01() {
   await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic);
   await keyringController.submitPassword("Gcc123456.");
-  await keyringController.addNewKeyring(CCDAOHDKeyring.type,
-
-  );
+  await keyringController.addNewKeyring(CCDAOHDKeyring.type, {
+    mnemonic: mnemonic,
+    numberOfAccounts: 1,
+  });
 
   const hdKeyringSelector = { type: CCDAOHDKeyring.type };
   await keyringController.withKeyring(
@@ -64,13 +66,10 @@ async function test01() {
       keyring.addAccounts(1, BIP44Chain.TRON);
       keyring.addAccounts(2, BIP44Chain.EOS);
 
-     const accounts = await keyring.getAccounts();
-     console.log(accounts);
+      const accounts = await keyring.getAccounts();
+      console.log(accounts);
 
-     //console.log(keyringController.state)
-     
-
-       
+      //console.log(keyringController.state)
     }
   );
 
@@ -79,6 +78,4 @@ async function test01() {
   //decodeVault();
 }
 
-
 test01();
-
