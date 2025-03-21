@@ -1,29 +1,32 @@
 import { hdWallet } from "jcc_wallet";
 const { HDWallet, BIP44Chain } = hdWallet;
 
-export default class CCDAOHDKeyring {
-  static type = "CCDAO HD Keyring";
-  type = CCDAOHDKeyring.type;
-
-  wallets = [];
-  mnemonic;
-  mutichainAccountLength = new Map();
-  numberOfAccounts;
+const type = "Ccdao Hd Keyring";
+export default class CcdaoHdKeyring {
+  static type = type;
+  
+  constructor(opts = {}) {
+    this.type = type;
+    this.mnemonic = opts.mnemonic || "";
+    this.wallets = [];
+    this.multichainAccountLength = new Map();
+    this.numberOfAccounts = 0;
+  }
 
   async serialize() {
     return {
       type: this.type,
       mnemonic: this.mnemonic,
       numberOfAccounts: this.numberOfAccounts,
-      mutichainAccountLength: Array.from(this.mutichainAccountLength.entries()),
+      multichainAccountLength: Array.from(this.multichainAccountLength.entries()),
     };
   }
 
   async deserialize(obj) {
-    this.type = obj.type;
+    this.type = type;
     this.mnemonic = obj.mnemonic;
     this.numberOfAccounts = this.wallets.length;
-    this.mutichainAccountLength = new Map(obj.mutichainAccountLength);
+    this.multichainAccountLength = new Map(obj.multichainAccountLength || []);
     return this;
   }
 
@@ -33,11 +36,11 @@ export default class CCDAOHDKeyring {
       mnemonic: this.mnemonic,
       language: "english",
     });
-    const index = this.mutichainAccountLength.get(chain) || 0;
+    const index = this.multichainAccountLength.get(chain) || 0;
 
     for (let i = 0; i < n; i++) {
       const wallet = hd.deriveWallet({ chain, account: 0, index: index + i });
-      this.mutichainAccountLength.set(chain, index + i + 1);
+      this.multichainAccountLength.set(chain, index + i + 1);
       newWallets.push(wallet);
       this.wallets.push(wallet);
       this.numberOfAccounts = this.wallets.length;

@@ -4,14 +4,14 @@ import { hdWallet } from "jcc_wallet";
 const { HDWallet, BIP44Chain } = hdWallet;
 import chains from "./support-chains.js";
 import { HdKeyring } from "@metamask/eth-hd-keyring";
-import CCDAOHDKeyring from "../ccdao-hd-keyring/index.js";
+import CcdaoHdKeyring from "../ccdao-hd-keyring/index.js";
 
 import {
   keyringBuilderFactory,
   KeyringController,
-  KeyringTypes,
 } from "@metamask/keyring-controller";
 import { Messenger } from "@metamask/base-controller";
+import { AccountsController } from "@metamask/accounts-controller";
 const encryptor = require("@metamask/browser-passworder");
 
 let controllerMessenger = new Messenger();
@@ -27,13 +27,13 @@ const keyringControllerMessenger = controllerMessenger.getRestricted({
 
 const keyringController = new KeyringController({
   messenger: keyringControllerMessenger,
-  keyringBuilders: [keyringBuilderFactory(CCDAOHDKeyring)],
+  keyringBuilders: [keyringBuilderFactory(CcdaoHdKeyring)],
 });
 
 keyringControllerMessenger.subscribe(
   "KeyringController:stateChange",
   (state) => {
-    //console.log("Keyring state changed:", state);
+    console.log("Keyring state changed:", state);
   }
 );
 
@@ -54,8 +54,9 @@ async function test01() {
   debugger;
   await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic);
   await keyringController.submitPassword("Gcc123456.");
-  const { id } = await keyringController.addNewKeyring(CCDAOHDKeyring.type, {
-    mnemonic: mnemonic,
+   
+  const { id } = await keyringController.addNewKeyring("Ccdao Hd Keyring", {
+    mnemonic: mnemonic
   });
 
   await keyringController.withKeyring({ id }, async ({ keyring }) => {
@@ -64,7 +65,8 @@ async function test01() {
     keyring.addAccounts(2, BIP44Chain.EOS);
 
     const accounts = await keyring.getAccounts();
-    console.log(accounts);
+    //console.log(accounts);
+    //console.log(keyring);
   });
   decodeVault();
 }
