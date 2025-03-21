@@ -54,9 +54,13 @@ async function test01() {
   debugger;
   await keyringController.createNewVaultAndRestore("Gcc123456.", mnemonic);
   await keyringController.submitPassword("Gcc123456.");
-   
-  const { id } = await keyringController.addNewKeyring("Ccdao Hd Keyring", {
-    mnemonic: mnemonic
+
+  // 为其他用途创建选择器
+  const keyringSelector = CcdaoHdKeyring.type;
+
+  // 添加新的keyring时使用类型字符串
+  const { id } = await keyringController.addNewKeyring(keyringSelector, {
+    mnemonic: mnemonic,
   });
 
   await keyringController.withKeyring({ id }, async ({ keyring }) => {
