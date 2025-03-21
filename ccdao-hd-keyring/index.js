@@ -10,15 +10,6 @@ export default class CCDAOHDKeyring {
   mutichainAccountLength = new Map();
   numberOfAccounts;
 
-  constructor(opts) {
-    console.log("opts", opts);
-    if (opts) {
-      this.mnemonic = opts.mnemonic;
-    } else {
-      this.mnemonic = HDWallet.generateMnemonic();
-    }
-  }
-
   async serialize() {
     return {
       type: this.type,
